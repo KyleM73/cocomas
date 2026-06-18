@@ -41,10 +41,11 @@ def A_Star(grid, start_node, target_node, max_iters=1000):
     return path[::-1]
 
 
-def A_StarDist(grid, start_node, target_node, distances, max_iters=1000):
+def A_StarDist(grid, start_node, target_node, distances, max_iters=200, verbose=False):
     if not grid.is_open(start_node.get_pose()):
-        print("Invalid start pose.")
-        print(start_node)
+        if verbose:
+            print("Invalid start pose.")
+            print(start_node)
         return np.inf
     
     _open = []
@@ -65,8 +66,8 @@ def A_StarDist(grid, start_node, target_node, distances, max_iters=1000):
                 path.append(current_node.get_pose())
                 current_node = current_node.get_parent()
             return len(path)
-        if distances[current_node.get_pose()] < np.inf:
-            return current_node.get_g() + distances[current_node.get_pose()]
+        if distances[0,*current_node.get_pose()] < np.inf:
+            return current_node.get_g() + distances[0,*current_node.get_pose()]
         neighbors = grid.get_adjacent(current_node)
         for n in neighbors:
             if n.get_pose() in _closed:
@@ -78,5 +79,5 @@ def A_StarDist(grid, start_node, target_node, distances, max_iters=1000):
             n.set_f(n.get_g() + n.get_h())
             _open.append(n)
     else:
-        print("Solution not found.")
+        if verbose: print("Solution not found.")
         return np.inf
